@@ -9,37 +9,35 @@ public class Main {
 
     public static void main(String[] args) throws FileNotFoundException{
         Scanner s1 = new Scanner(new File("input1.txt"));
-        Scanner s2 = new Scanner(new File("input2.txt"));
-        ArrayList<Integer[]> input1 = new ArrayList<>();
-        ArrayList<Stack<Character>> input2 = new ArrayList<>();
+        
+        String input = s1.nextLine();
 
-        while(s1.hasNextLine()) {
-        // for(int i = 0; i < 6; i++) {
-            String temp = s1.nextLine();
-            String[] temp1 = temp.split(" ");
-            input1.add(new Integer[] {Integer.parseInt(temp1[1]), Integer.parseInt(temp1[3]), Integer.parseInt(temp1[5])});
+        System.out.println(tuningTrouble(input, 14));
+
+    }
+
+    public static int tuningTrouble(String input, int windowSize) {
+        int ans = windowSize;
+
+        String temp = input.substring(ans-windowSize, ans);
+       
+        while(tuningTroubleContainsRepeat(temp)) {
+            ans++;
+            temp = input.substring(ans-windowSize, ans);
         }
 
-        ArrayList<String> t = new ArrayList<>();
-        while(s2.hasNextLine()) {
-            t.add(s2.nextLine());
-        }
+        return ans;
+    }
 
-        for(int i = 1; i < t.get(0).length(); i+= 4) {
-            Stack<Character> tempStack = new Stack<>();
-            for(int j = 0; j < t.size()-1; j++) {
-                Character temp = t.get(j).charAt(i);
-                if(!temp.equals(' ')) tempStack.push(temp);
+    public static boolean tuningTroubleContainsRepeat(String s) {
+        for(int i = 0; i < s.length(); i++) {
+            for(int j = i+1; j < s.length(); j++) {
+                if(s.charAt(i)==s.charAt(j)) {
+                    return true;
+                }
             }
-            Stack<Character> finalStack = new Stack<>();
-            while(!tempStack.empty()) {
-                finalStack.push(tempStack.pop());
-            }
-            input2.add(finalStack);
         }
-
-        System.out.println(supplyStacks2(input1, input2));
-
+        return false;
     }
 
     public static String supplyStacks2(
