@@ -10,10 +10,113 @@ public class Main {
     public static void main(String[] args) throws FileNotFoundException{
         Scanner s1 = new Scanner(new File("input1.txt"));
         
-        String input = s1.nextLine();
+        ArrayList<String> input = new ArrayList<>();
 
-        System.out.println(tuningTrouble(input, 14));
+        while(s1.hasNextLine()) input.add(s1.nextLine());
 
+        System.out.println(noSpaceLeftOnDevice2(input));
+
+    }
+
+    public static int noSpaceLeftOnDevice2(ArrayList<String> input) {
+        directoryTree rootDirectory = createTree(input);
+        int smallestSize = rootDirectory.getIndirectFileSize();
+        int sizeNeeded = 30000000 - (70000000 - rootDirectory.getIndirectFileSize());
+        System.out.println(sizeNeeded);
+        System.out.println(smallestSize);
+        Stack<directoryTree> stack = new Stack<>();
+        stack.push(rootDirectory);
+        while(!stack.empty()) {
+            directoryTree curr = stack.pop();
+            int currSize = curr.getIndirectFileSize();
+            if(currSize >= sizeNeeded && currSize <= smallestSize) {
+                smallestSize = currSize;
+            }
+            for(directoryTree d : curr.childNodes) stack.push(d);
+        }
+        return smallestSize;
+    }
+
+    public static int noSpaceLeftOnDevice1(ArrayList<String> input) {
+        directoryTree rootDirectory = createTree(input);
+        int ans = 0;
+        Stack<directoryTree> stack = new Stack<>();
+        stack.push(rootDirectory);
+        while(!stack.empty()) {
+            directoryTree curr = stack.pop();
+            int indirectFileSize = curr.getIndirectFileSize();
+            if(indirectFileSize <= 100000) ans += indirectFileSize;
+            for(directoryTree d : curr.childNodes) stack.push(d);
+        }
+        return ans;
+    }
+
+    public static directoryTree createTree(ArrayList<String> input) {
+        directoryTree currDirectory = null;
+        directoryTree rootDirectory = null;
+        for(String command : input) {
+            if(command.charAt(0) == '$'){
+                if(command.substring(2,4).equals("cd")) {
+                    if(currDirectory!=null) currDirectory.sizeSet = true;
+                    if(command.substring(5).equals("..")) currDirectory = currDirectory.parent;
+                    else if(currDirectory==null){
+                        currDirectory = new directoryTree("/", currDirectory);
+                        rootDirectory = currDirectory;
+                    }
+                    else currDirectory = currDirectory.getChildWithName(command.substring(5));
+                }
+            } else if(command.substring(0,3).equals("dir")) {
+                currDirectory.childNodes.add(new directoryTree(command.substring(4), currDirectory));
+            } else if(!currDirectory.sizeSet) {
+                String[] temp = command.split(" ");
+                currDirectory.directFileSize += Integer.parseInt(temp[0]);
+            }
+            
+        }
+        return rootDirectory;
+    }
+
+    public static class directoryTree {
+        public boolean foundIndirectFileSize;
+        private int indirectFileSize;
+
+        public int directFileSize;
+        public boolean sizeSet;
+        public ArrayList<directoryTree> childNodes;
+        public directoryTree parent;
+        public String name;
+        public directoryTree(String name, directoryTree parent) {
+            this.parent = parent;
+            this.name = name;
+            sizeSet = false;
+            directFileSize = 0;
+            childNodes = new ArrayList<>();
+
+            foundIndirectFileSize = false;
+            indirectFileSize = 0;
+        }
+        public directoryTree getChildWithName(String name) {
+            for(directoryTree d : childNodes) {
+                if(d.name.equals(name)) return d;
+            }
+            return null;
+        }
+        public int getIndirectFileSize() {
+            if(foundIndirectFileSize) {
+                return indirectFileSize;
+            }
+            int size = directFileSize;
+            foundIndirectFileSize = true;
+            if(childNodes.size() == 0){
+                indirectFileSize = size;
+                return size;
+            }
+            for(directoryTree d : childNodes) {
+                size+=d.getIndirectFileSize();
+            }
+            indirectFileSize = size;
+            return size;
+        }
     }
 
     public static int tuningTrouble(String input, int windowSize) {
