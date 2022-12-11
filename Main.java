@@ -15,8 +15,57 @@ public class Main {
 
         while(s1.hasNextLine()) input.add(s1.nextLine());
 
-        System.out.println(ropeBridge(input, 10));
+        // System.out.println(cathodeRayTube1(input));
+        cathodeRayTube2(input);
 
+    }
+
+    public static void cathodeRayTube2(ArrayList<String> input) {
+        ArrayList<Integer> easyInput = new ArrayList<>();
+        for(String command : input) {
+            if(command.substring(0,4).equals("noop")) {
+                easyInput.add(0);
+            } else {
+                easyInput.add(0);
+                easyInput.add(Integer.parseInt(command.substring(5)));
+            }
+        }
+
+        int cycle = 0;
+        int x = 1;
+        for(int i = 0; i < 6; i++) {
+            for(int j = 0; j < 40; j++) {
+                if(Math.abs(x-j) <= 1) System.out.print("#");
+                else System.out.print(".");
+                if(cycle < easyInput.size()) x+=easyInput.get(cycle);
+                cycle++;
+            }
+            System.out.println();
+        }
+    }
+
+    public static int cathodeRayTube1(ArrayList<String> input) {
+        ArrayList<Integer> easyInput = new ArrayList<>();
+        for(String command : input) {
+            if(command.substring(0,4).equals("noop")) {
+                easyInput.add(0);
+            } else {
+                easyInput.add(0);
+                easyInput.add(Integer.parseInt(command.substring(5)));
+            }
+        }
+
+        int ans = 0;
+        int x = 1;
+        int timeToRead = 20;
+        for(int i = 1; i <= easyInput.size(); i++) {
+            if(timeToRead == i) {
+                ans += timeToRead*x;
+                timeToRead += 40;
+            }
+            x+=easyInput.get(i-1);
+        }
+        return ans;
     }
 
     public static int ropeBridge(ArrayList<String> commands, int length) {
