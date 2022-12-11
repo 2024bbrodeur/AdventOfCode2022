@@ -9,15 +9,7 @@ import java.util.Stack;
 public class Main {
 
     public static void main(String[] args) throws FileNotFoundException{
-        Scanner s1 = new Scanner(new File("input1.txt"));
-        
-        ArrayList<String> input = new ArrayList<>();
-
-        while(s1.hasNextLine()) input.add(s1.nextLine());
-
-        // System.out.println(cathodeRayTube1(input));
-        cathodeRayTube2(input);
-
+        MonkeyInTheMiddle.part1();
     }
 
     public static void cathodeRayTube2(ArrayList<String> input) {
