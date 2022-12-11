@@ -14,8 +14,99 @@ public class Main {
 
         while(s1.hasNextLine()) input.add(s1.nextLine());
 
-        System.out.println(noSpaceLeftOnDevice2(input));
+        System.out.println(treetopTreeHouse2(input));
 
+    }
+
+    public static int treetopTreeHouse2(ArrayList<String> input) {
+        int largest = 0;
+        for(int row = 0; row < input.size(); row++) {
+            for(int column = 0; column < input.get(row).length(); column++) {
+                int visibility = treeVisibility(row, column, input);
+                largest = visibility > largest ? visibility : largest;
+            }
+        }
+        return largest;
+    }
+
+    public static int treeVisibility(int row, int column, ArrayList<String> input) {
+        int up = 0;
+        int down = 0;
+        int left = 0;
+        int right = 0;
+        int currHeight = Integer.parseInt(input.get(row).substring(column, column+1));
+        for(int i = row - 1; i >= 0; i--) {
+            up++;
+            if(Integer.parseInt(input.get(i).substring(column, column+1)) >= currHeight) break;
+        }
+        for(int i = row + 1; i < input.size(); i++) {
+            down++;
+            if(Integer.parseInt(input.get(i).substring(column, column+1)) >= currHeight) break;
+        }
+        for(int i = column - 1; i >= 0; i--) {
+            left++;
+            if(Integer.parseInt(input.get(row).substring(i, i+1)) >= currHeight) break;
+        }
+        for(int i = column + 1; i < input.get(row).length(); i++) {
+            right++;
+            if(Integer.parseInt(input.get(row).substring(i, i+1)) >= currHeight) break;
+        }
+
+        return up*down*left*right;
+    }
+
+    public static int treetopTreeHouse1(ArrayList<String> input) {
+        int ans = 0;
+        for(int row = 0; row < input.size(); row++) {
+            for(int column = 0; column < input.get(row).length(); column++) {
+                if(isTreeVisible(row, column, input)) ans++;
+            }
+        }
+        return ans;
+    }
+
+    public static boolean isTreeVisible(int row, int column, ArrayList<String> input) {
+            if(row == 0 || row == input.size() - 1
+            || column == 0 || column == input.get(row).length() - 1) {
+                return true;
+            }
+            int curr = Integer.parseInt(input.get(row).substring(column, column+1));
+            boolean visible = true;
+
+            for(int i = 0; i < row; i++) {
+                if(curr <= Integer.parseInt(input.get(i).substring(column, column+1))) {
+                    visible = false;
+                    break;
+                }
+            }
+            if(visible) return true;
+            visible = true;
+
+            for(int i = row+1; i < input.size(); i++) {
+                if(curr <= Integer.parseInt(input.get(i).substring(column, column+1))){
+                    visible = false;
+                    break;
+                }
+            }
+            if(visible) return true;
+            visible = true;
+
+            for(int i = 0; i < column; i++) {
+                if(curr <= Integer.parseInt(input.get(row).substring(i, i+1))) {
+                    visible = false;
+                    break;
+                }
+            }
+            if(visible) return true;
+            visible = true;
+
+            for(int i = column+1; i < input.get(row).length(); i++) {
+                if(curr <= Integer.parseInt(input.get(row).substring(i, i+1))){
+                    visible = false;
+                    break;
+                }
+            }
+            return visible;
     }
 
     public static int noSpaceLeftOnDevice2(ArrayList<String> input) {
