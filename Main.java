@@ -2,6 +2,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Scanner;
 import java.util.Stack;
 
@@ -14,8 +15,49 @@ public class Main {
 
         while(s1.hasNextLine()) input.add(s1.nextLine());
 
-        System.out.println(treetopTreeHouse2(input));
+        System.out.println(ropeBridge(input, 10));
 
+    }
+
+    public static int ropeBridge(ArrayList<String> commands, int length) {
+        ArrayList<int[]> positions = new ArrayList<>();
+        HashSet<String> tailPositions = new HashSet<>();
+        for(int i = 0; i < length; i++) {
+            positions.add(new int[]{0,0});
+        }
+        for(String command : commands) {
+            String[] c = command.split(" ");
+            String c0 = c[0];
+            int c1 = Integer.parseInt(c[1]);
+            while(c1 > 0) {
+                if(c0.equals("R")) {
+                    positions.get(0)[0]++;
+                } else if(c0.equals("L")) {
+                    positions.get(0)[0]--;
+                } else if(c0.equals("U")) {
+                    positions.get(0)[1]++;
+                } else if(c0.equals("D")) {
+                    positions.get(0)[1]--;
+                }
+
+                for(int i = 1; i < positions.size(); i++) {
+                    followHead(positions.get(i-1),positions.get(i));
+                }
+                
+                c1--;
+                tailPositions.add(""+positions.get(positions.size()-1)[0]+positions.get(positions.size()-1)[1]);
+            }
+        }
+        return tailPositions.size();
+    }
+
+    public static void followHead(int[] head, int[] tail) {
+        if(!(Math.abs(head[0]-tail[0]) <= 1 && Math.abs(head[1]-tail[1]) <= 1)) {
+            if(tail[0] < head[0]) tail[0]++;
+            if(tail[0] > head[0]) tail[0]--;
+            if(tail[1] < head[1]) tail[1]++;
+            if(tail[1] > head[1]) tail[1]--;
+        }
     }
 
     public static int treetopTreeHouse2(ArrayList<String> input) {
